@@ -11,6 +11,7 @@ class MessageType extends EnumBase  {
 
 	const PAYMENT = "Payment";
 	const THREE_D_SECURE = "3DS";
+	const APM = "APM";
 
 	/**
 	 * @var string The type

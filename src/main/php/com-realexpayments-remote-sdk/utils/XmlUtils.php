@@ -4,7 +4,11 @@
 namespace com\realexpayments\remote\sdk\utils;
 
 
+use com\realexpayments\remote\sdk\domain\APM\APMRequest;
+use com\realexpayments\remote\sdk\domain\APM\APMResponse;
+use com\realexpayments\remote\sdk\domain\APM\normaliser\APMRequestNormalizer;
 use com\realexpayments\remote\sdk\domain\iRequest;
+use com\realexpayments\remote\sdk\domain\normaliser\normaliser\APMResponseNormalizer;
 use com\realexpayments\remote\sdk\domain\payment\normaliser\AddressNormaliser;
 use com\realexpayments\remote\sdk\domain\payment\normaliser\AmountNormalizer;
 use com\realexpayments\remote\sdk\domain\payment\normaliser\AutoSettleNormalizer;
@@ -22,6 +26,7 @@ use com\realexpayments\remote\sdk\domain\payment\normaliser\FraudFilterRuleNorma
 use com\realexpayments\remote\sdk\domain\payment\normaliser\PayerAddressNormalizer;
 use com\realexpayments\remote\sdk\domain\payment\normaliser\PayerNormalizer;
 use com\realexpayments\remote\sdk\domain\payment\normaliser\PaymentDataNormalizer;
+use com\realexpayments\remote\sdk\domain\payment\normaliser\PaymentMethodDetailsNormaliser;
 use com\realexpayments\remote\sdk\domain\payment\normaliser\PaymentRequestNormalizer;
 use com\realexpayments\remote\sdk\domain\payment\normaliser\PaymentResponseNormalizer;
 use com\realexpayments\remote\sdk\domain\payment\normaliser\PhoneNumbersNormalizer;
@@ -177,6 +182,8 @@ class XmlUtils {
 			) )
 		);
 		$normalizers                                      = array(
+			new APMRequestNormalizer(),
+            new APMResponseNormalizer(),
 			new ThreeDSecureRequestNormalizer(),
 			new ThreeDSecureResponseNormalizer(),
 			new CommentsNormalizer(),
@@ -195,6 +202,21 @@ class XmlUtils {
 		);
 		self::$marshallers[ MessageType::THREE_D_SECURE ] = new Serializer( $normalizers, $encoders );
 
+
+        $encoders                                         = array(
+            new CustomStringXmlEncoder( 'response', array(
+                'timestamp',
+                'number'
+            ) )
+        );
+
+        $normalizers                                      = array(
+            new APMRequestNormalizer(),
+            new APMResponseNormalizer(),
+            new PaymentMethodDetailsNormaliser(),
+            //new  ObjectNormalizer()
+        );
+        self::$marshallers[ MessageType::APM ] = new Serializer( $normalizers, $encoders );
 	}
 
 	private static function getRootName( $object ) {
@@ -224,6 +246,15 @@ class XmlUtils {
 
 				return ThreeDSecureResponse::GetClassName();
 			}
+
+            case MessageType::APM: {
+                if ( self::IsRequest( $xml ) ) {
+                    return APMRequest::GetClassName();
+
+                }
+
+                return APMResponse::GetClassName();
+            }
 
 		}
 	}
