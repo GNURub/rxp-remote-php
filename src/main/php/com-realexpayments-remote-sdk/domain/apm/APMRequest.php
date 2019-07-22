@@ -81,6 +81,13 @@ class APMRequest implements iRequest {
 	 */
 	private $orderId;
 
+
+    /**
+     * @var string The payments reference for the transaction, returned in the payment-set response.
+     *
+     */
+    private $paymentsReference;
+
     /**
      * @var string Represents the unique order id of this transaction. Must be unique across all of the sub-accounts.
      *
@@ -233,6 +240,22 @@ class APMRequest implements iRequest {
      */
     public function setPaymentMethod( $paymentMethod ) {
         $this->paymentMethod = $paymentMethod;
+    }
+
+    /**
+     * @return string
+     */
+    public function getPaymentsReference()
+    {
+        return $this->paymentsReference;
+    }
+
+    /**
+     * @param string $paymentsReference
+     */
+    public function setPaymentsReference($paymentsReference)
+    {
+        $this->paymentsReference = $paymentsReference;
     }
 
 	/**
@@ -414,6 +437,17 @@ class APMRequest implements iRequest {
      */
     public function addPaymentMethod( $paymentMethod ) {
         $this->paymentMethod = $paymentMethod;
+
+        return $this;
+    }
+
+    /**
+     * @param string $pasRef
+     * @return APMRequest
+     */
+    public function addPaymentsReference($pasRef)
+    {
+        $this->paymentsReference = $pasRef;
 
         return $this;
     }

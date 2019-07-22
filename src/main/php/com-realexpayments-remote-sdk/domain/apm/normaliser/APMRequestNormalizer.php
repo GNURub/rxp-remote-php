@@ -45,6 +45,7 @@ class APMRequestNormalizer extends AbstractNormalizer
             ->addAccount($array['account'])
             ->addOrderId($array['orderid'])
             ->addPaymentMethod($array['paymentmethod'])
+            ->addPaymentsReference($array['pasref'])
             ->addHash($array['sha1hash']);
 
 
@@ -151,6 +152,7 @@ class APMRequestNormalizer extends AbstractNormalizer
             'amount' => $object->getAmount(),
             'sha1hash' => $object->getHash(),
             'comments' => $hasComments ? array('comment' => $comments) : array(),
+            'pasref' => $object->getPaymentsReference(),
             'paymentmethod' => $object->getPaymentMethod(),
             'paymentmethoddetails' => $object->getPaymentMethodDetails(),
             'autosettle' => $object->getAutoSettle()
